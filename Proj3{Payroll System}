@@ -1,0 +1,103 @@
+
+import java.util.Scanner;
+
+public class PayrollSystem {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Employee[] employees = new Employee[3];
+
+        for (int i = 0; i < employees.length; i++) {
+            System.out.print("Enter Employee Name: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Enter Employee ID: ");
+            int id = scanner.nextInt();
+            scanner.nextLine(); // consume newline left-over
+
+            System.out.print("Enter Employee Salary: ");
+            double salary = scanner.nextDouble();
+            scanner.nextLine(); // consume newline left-over
+
+            employees[i] = new Employee(name, id, salary);
+            System.out.println();
+        }
+
+        int choice;
+        do {
+            System.out.println("Payroll System");
+            System.out.println("1. Add Hours Worked");
+            System.out.println("2. Print Payroll");
+            System.out.println("3. Exit");
+
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // consume newline left-over
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Employee ID: ");
+                    int id = scanner.nextInt();
+                    scanner.nextLine(); // consume newline left-over
+
+                    System.out.print("Enter Hours Worked: ");
+                    double hours = scanner.nextDouble();
+                    scanner.nextLine(); // consume newline left-over
+
+                    for (Employee employee : employees) {
+                        if (employee.getId() == id) {
+                            employee.addHours(hours);
+                            break;
+                        }
+                    }
+                    break;
+                case 2:
+                    System.out.println("Payroll Report");
+                    for (Employee employee : employees) {
+                        System.out.println(employee);
+                        System.out.printf("Pay: %.2f\n", employee.getPay());
+                        System.out.println();
+                    }
+                    break;
+                case 3:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid Choice!");
+                    break;
+            }
+            System.out.println();
+        } while (choice != 3);
+
+        scanner.close();
+    }
+}
+
+class Employee {
+    private String name;
+    private int id;
+    private double salary;
+    private double hoursWorked;
+
+    public Employee(String name, int id, double salary) {
+        this.name = name;
+        this.id = id;
+        this.salary = salary;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void addHours(double hours) {
+        hoursWorked += hours;
+    }
+
+    public double getPay() {
+        return salary * hoursWorked;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee " + name + " (ID: " + id + ")";
+    }
+}
