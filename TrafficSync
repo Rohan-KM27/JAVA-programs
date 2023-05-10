@@ -1,0 +1,138 @@
+import java.util.ArrayList;
+import java.util.List;
+
+public class TrafficIntersection {
+    private List<IntersectionLane> lanes;
+    private int duration;
+
+    public TrafficIntersection(int numLanes, int duration) {
+        lanes = new ArrayList<>();
+        for (int i = 0; i < numLanes; i++) {
+            lanes.add(new IntersectionLane());
+        }
+        this.duration = duration;
+    }
+
+    public void start() {
+        for (IntersectionLane lane : lanes) {
+            new Thread(lane).start();
+        }
+    }
+
+    public void stop() {
+        for (IntersectionLane lane : lanes) {
+            lane.stop();
+        }
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        TrafficIntersection intersection = new TrafficIntersection(4, 10000);
+        intersection.start();
+        Thread.sleep(intersection.getDuration());
+        intersection.stop();
+    }
+}
+
+class IntersectionLane implements Runnable {
+    private volatile boolean running;
+    private volatile IntersectionDirection direction;
+    private List<Car> cars;
+    private TrafficLight light;
+
+    public IntersectionLane() {
+        running = true;
+        cars = new ArrayList<>();
+        light = new TrafficLight();
+    }
+
+    public void stop() {
+        running = false;
+    }
+
+    @Override
+    public void run() {
+        while (running) {
+            try {
+                light.change(direction);
+                Thread.sleep(1000);
+                moveCars();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void moveCars() {
+        synchronized (this) {
+            for (int i = 0; i < cars.size(); i++) {
+                Car car = cars.get(i);
+                if (car.move()) {
+                    cars.remove(i);
+                    i--;
+                }
+            }
+        }
+    }
+
+    public synchronized boolean addCar(Car car) {
+        if (cars.size() < 10) {
+            cars.add(car);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public synchronized boolean isGreen() {
+        return light.isGreen();
+    }
+
+    public synchronized void setDirection(IntersectionDirection direction) {
+        this.direction = direction;
+    }
+
+    public enum IntersectionDirection {
+        NORTH_SOUTH,
+        EAST_WEST
+    }
+}
+
+class Car {
+    private int position;
+
+    public Car() {
+        position = 0;
+    }
+
+    public boolean move() {
+        position++;
+        return position > 10;
+    }
+}
+
+class TrafficLight {
+    private volatile boolean isGreen;
+    private volatile IntersectionLane.IntersectionDirection direction;
+
+    public TrafficLight() {
+        isGreen = false;
+        direction = IntersectionLane.IntersectionDirection.NORTH_SOUTH;
+    }
+
+    public synchronized void change(IntersectionLane.IntersectionDirection newDirection) {
+        if (newDirection != direction) {
+            isGreen = false;
+            direction = newDirection;
+        } else {
+            isGreen = true;
+        }
+    }
+
+    public synchronized boolean isGreen() {
+        return isGreen;
+    }
+}
