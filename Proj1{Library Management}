@@ -1,0 +1,119 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class LibraryManagementSystem {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<Book> books = new ArrayList<>();
+        ArrayList<User> users = new ArrayList<>();
+        int choice;
+
+        do {
+            System.out.println("Library Management System");
+            System.out.println("1. Add Book");
+            System.out.println("2. Remove Book");
+            System.out.println("3. List Books");
+            System.out.println("4. Add User");
+            System.out.println("5. Remove User");
+            System.out.println("6. List Users");
+            System.out.println("7. Exit");
+
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline left-over
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter Book Title: ");
+                    String title = scanner.nextLine();
+                    System.out.println("Enter Author Name: ");
+                    String author = scanner.nextLine();
+                    System.out.println("Enter ISBN: ");
+                    String isbn = scanner.nextLine();
+                    System.out.println("Enter Number of Copies: ");
+                    int numCopies = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline left-over
+                    books.add(new Book(title, author, isbn, numCopies));
+                    System.out.println("Book Added Successfully!");
+                    break;
+                case 2:
+                    System.out.println("Enter ISBN of the Book to Remove: ");
+                    String isbnToRemove = scanner.nextLine();
+                    for (int i = 0; i < books.size(); i++) {
+                        Book book = books.get(i);
+                        if (book.getIsbn().equals(isbnToRemove)) {
+                            books.remove(i);
+                            System.out.println("Book Removed Successfully!");
+                            break;
+                        }
+                    }
+                    break;
+                case 3:
+                    System.out.println("Books Available:");
+                    for (Book book : books) {
+                        System.out.println(book);
+                    }
+                    break;
+                case 4:
+                    System.out.println("Enter User Name: ");
+                    String userName = scanner.nextLine();
+                    System.out.println("Enter User Email: ");
+                    String userEmail = scanner.nextLine();
+                    users.add(new User(userName, userEmail));
+                    System.out.println("User Added Successfully!");
+                    break;
+                case 5:
+                    System.out.println("Enter User Email of the User to Remove: ");
+                    String userEmailToRemove = scanner.nextLine();
+                    for (int i = 0; i < users.size(); i++) {
+                        User user = users.get(i);
+                        if (user.getEmail().equals(userEmailToRemove)) {
+                            users.remove(i);
+                            System.out.println("User Removed Successfully!");
+                            break;
+                        }
+                    }
+                    break;
+                case 6:
+                    System.out.println("Users Available:");
+                    for (User user : users) {
+                        System.out.println(user);
+                    }
+                    break;
+                case 7:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid Choice!");
+                    break;
+            }
+            System.out.println();
+        } while (choice != 7);
+
+        scanner.close();
+    }
+}
+
+class Book {
+    private String title;
+    private String author;
+    private String isbn;
+    private int numCopies;
+
+    public Book(String title, String author, String isbn, int numCopies) {
+        this.title = title;
+        this.author = author;
+        this.isbn = isbn;
+        this.numCopies = numCopies;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getIsbn() {
+        return isbn;
